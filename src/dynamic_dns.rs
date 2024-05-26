@@ -21,7 +21,7 @@ pub fn perform_dynamic_dns(
         return Ok(());
     };
     for zone in zones_to_monitor.iter() {
-        println!("Updating zone {}", zone.zone_id);
+        println!("processing zone {}", zone.zone_id);
         let mut records = zone.get_dns_records(cf_client)?;
         for mut record in records.drain(..) {
             match maybe_update_dns_record(
