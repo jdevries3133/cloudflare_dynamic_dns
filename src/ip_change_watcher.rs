@@ -2,6 +2,7 @@
 //! of the system about changes.
 
 use anyhow::Result;
+use log::info;
 use reqwest::blocking::get;
 use std::net::Ipv4Addr;
 
@@ -36,7 +37,7 @@ impl IPChangeWatcher {
     pub fn did_public_ip_change(&self) -> bool {
         if let Some(old_ip) = self.old_ip {
             if old_ip != self.current_ip {
-                println!(
+                info!(
                     "IP address changed ({} => {})",
                     self.old_ip
                         .map(|i| i.to_string())
@@ -46,7 +47,7 @@ impl IPChangeWatcher {
             }
             old_ip != self.current_ip
         } else {
-            println!("Indicating IP change because old IP is unknown");
+            info!("Indicating IP change because old IP is unknown");
             true
         }
     }
