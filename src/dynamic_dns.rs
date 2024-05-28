@@ -6,6 +6,7 @@ use crate::{
     ip_change_watcher::IPChangeWatcher,
 };
 use anyhow::Result;
+use log::{error, info};
 use std::net::Ipv4Addr;
 
 /// Use the [crate::IPChangeWatcher] to see if the public IP has changed,
@@ -21,7 +22,7 @@ pub fn perform_dynamic_dns(
         return Ok(());
     };
     for zone in zones_to_monitor.iter() {
-        println!("processing zone {}", zone.zone_id);
+        info!("processing zone {}", zone.zone_id);
         let mut records = zone.get_dns_records(cf_client)?;
         for mut record in records.drain(..) {
             match maybe_update_dns_record(
@@ -30,13 +31,13 @@ pub fn perform_dynamic_dns(
             ) {
                 DnsRecordAction::Updated => {
                     zone.save_dns_record(cf_client, &record)?;
-                    println!("Zone {} updated", zone.zone_id);
+                    info!("Zone {} updated", zone.zone_id);
                 }
                 DnsRecordAction::Noop => {
-                    println!("Noop for zone {}", zone.zone_id);
+                    info!("Noop for zone {}", zone.zone_id);
                 }
                 DnsRecordAction::Error => {
-                    eprintln!("Error updating zone {}", zone.zone_id);
+                    error!("Error updating zone {}", zone.zone_id);
                 }
             }
         }
@@ -59,7 +60,7 @@ pub fn maybe_update_dns_record(
         return DnsRecordAction::Noop;
     }
     if record.locked {
-        eprintln!(
+        error!(
             "Warning: skipping record {} because it is locked",
             record.id
         );

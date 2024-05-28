@@ -3,6 +3,7 @@
 //! change.
 
 use anyhow::Result;
+use log::info;
 use std::{env, time::Duration};
 
 mod cf_types;
@@ -19,6 +20,7 @@ use zone_id::ZoneId;
 /// In an infinite loop, monitor our public IP address and update CloudFlare
 /// DNS records if our public IP changes.
 fn main() -> Result<()> {
+    env_logger::init();
     let poll_interval = Duration::from_secs(300);
     let cf_client = CloudFlareApiClient {
         api_key: env::var("CLOUDFLARE_API_KEY")
@@ -53,13 +55,13 @@ fn main() -> Result<()> {
     let mut ip_watcher =
         IPChangeWatcher::new("https://checkip.amazonaws.com".to_string())?;
     loop {
-        println!("Beginning dynamic DNS check");
+        info!("Beginning dynamic DNS check");
         perform_dynamic_dns(
             &mut ip_watcher,
             &zones_to_monitor[..],
             &cf_client,
         )?;
-        println!("Dynamic DNS check is done");
+        info!("Dynamic DNS check is done");
         std::thread::sleep(poll_interval);
     }
 }

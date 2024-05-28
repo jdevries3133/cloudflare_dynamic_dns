@@ -59,6 +59,8 @@ resource "kubernetes_secret" "app_secrets" {
   }
   data = {
     CLOUDFLARE_API_KEY = var.cloudflare_api_key
+    // See https://docs.rs/env_logger/latest/env_logger/
+    RUST_LOG = "cloudflare_dynamic_dns=info"
   }
 }
 
