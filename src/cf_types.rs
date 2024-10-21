@@ -21,7 +21,6 @@ pub struct DnsRecord {
     pub record_type: String,
     pub created_on: String,
     pub id: String,
-    pub locked: bool,
     pub modified_on: String,
     pub proxiable: bool,
     pub tags: Vec<String>,

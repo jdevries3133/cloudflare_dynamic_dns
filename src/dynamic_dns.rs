@@ -59,13 +59,6 @@ pub fn maybe_update_dns_record(
     if record.record_type != "A" {
         return DnsRecordAction::Noop;
     }
-    if record.locked {
-        error!(
-            "Warning: skipping record {} because it is locked",
-            record.id
-        );
-        return DnsRecordAction::Noop;
-    }
     let res = record.content.parse::<Ipv4Addr>();
     match res {
         Ok(record_ip) => {
@@ -92,7 +85,6 @@ mod test {
             record_type: "A".into(),
             created_on: "today".into(),
             id: "something".into(),
-            locked: false,
             modified_on: "today".into(),
             proxiable: true,
             tags: vec![],
@@ -121,19 +113,6 @@ mod test {
         let res = maybe_update_dns_record(&mut record, new_ip);
         assert_eq!(record.content, new_ip.to_string());
         assert_eq!(res, DnsRecordAction::Updated);
-    }
-
-    /// If the record is locked, we will perform a Noop, even if the record
-    /// is of type A, and the IPs do not match. Fwiw, the IP on the record
-    /// also will not be mutated in this case.
-    #[test]
-    fn test_maybe_update_lock_noop() {
-        let mut record = mock_dns_record();
-        record.locked = true;
-        let new_ip = Ipv4Addr::new(4, 4, 4, 4);
-        let res = maybe_update_dns_record(&mut record, new_ip);
-        assert_ne!(record.content, new_ip.to_string());
-        assert_eq!(res, DnsRecordAction::Noop);
     }
 
     /// If, for whatever reason, the `.content` property on the CloudFlare
