@@ -89,8 +89,6 @@ mod test {
             proxiable: true,
             tags: vec![],
             ttl: 1,
-            zone_id: "something".into(),
-            zone_name: "something".into(),
         }
     }
 

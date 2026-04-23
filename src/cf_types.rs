@@ -25,8 +25,6 @@ pub struct DnsRecord {
     pub proxiable: bool,
     pub tags: Vec<String>,
     pub ttl: u32,
-    pub zone_id: String,
-    pub zone_name: String,
 }
 
 #[derive(Serialize, Deserialize)]
